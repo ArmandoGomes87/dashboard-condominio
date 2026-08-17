@@ -1,4 +1,4 @@
-name: Dashboard
+name: Dashboard Sicond
 
 on:
   workflow_dispatch:
@@ -8,16 +8,34 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Baixar repositorio
+        uses: actions/checkout@v4
 
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-python@v5
+      - name: Preparar Python
+        uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
-      - run: pip install -r requirements.txt
+      - name: Instalar dependencias Python
+        run: pip install -r requirements.txt
 
-      - run: python main.py
+      - name: Instalar navegador Playwright
+        run: python -m playwright install chromium --with-deps
+
+      - name: Executar robo
+        run: python main.py
         env:
           GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
           SHEET_ID: ${{ secrets.SHEET_ID }}
+          SICOND_USER: ${{ secrets.SICOND_USER }}
+          SICOND_PASSWORD: ${{ secrets.SICOND_PASSWORD }}
+          PORTAL_URL: ${{ secrets.PORTAL_URL }}
+
+      - name: Salvar diagnostico
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: diagnostico-sicond
+          path: |
+            diagnostico/
+            downloads/
