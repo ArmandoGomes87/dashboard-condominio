@@ -2,6 +2,3 @@ gspread
 oauth2client
 playwright
 pandas
-openpyxl
-beautifulsoup4
-lxml
